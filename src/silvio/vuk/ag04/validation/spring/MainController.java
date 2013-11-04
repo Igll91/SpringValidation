@@ -28,8 +28,24 @@ import silvio.vuk.java.ag04.validator.ValidationControlCenter;
 public class MainController {
 
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
-	private final String UPLOAD_DIRECTORY = "/var/tmp/";
-
+	private final String UPLOAD_DIRECTORY_UNIX = "/var/tmp/";
+	private final String UPLOAD_DIRECTORY = "C:\\Users\\Silvio\\Documents\\";
+	private static String FS;
+	
+	static{
+		if (ValidationControlCenter.isWindows()) {
+			FS = "\\";
+		} else if (ValidationControlCenter.isMac()) {
+			FS = "/";
+		} else if (ValidationControlCenter.isUnix()) {
+			FS = "/";
+		} else if (ValidationControlCenter.isSolaris()) {
+			FS = "/";
+		} else {
+			// OS not supported
+		}
+	}
+	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -82,7 +98,7 @@ public class MainController {
 
 			vcc.validateFile();
 			
-			String filePathForReading = path.substring(0, path.lastIndexOf("/"));
+			String filePathForReading = path.substring(0, path.lastIndexOf(FS));
         	filePathForReading +="/ValidationResults.txt";
         	
         	List<String> listOfStrings = readValidationFile(filePathForReading);
@@ -114,7 +130,7 @@ public class MainController {
 	{
 		BufferedReader br = new BufferedReader(new FileReader(path));
 
-		List<String> listOfStrings = new ArrayList<>();
+		List<String> listOfStrings = new ArrayList<String>();
 
 		String line;
 		while ((line = br.readLine()) != null) 
